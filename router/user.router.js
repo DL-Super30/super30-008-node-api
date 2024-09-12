@@ -187,7 +187,7 @@ const router = express.Router();
  *       - in: path
  *         name: id
  *         required: true
- *         description: Numeric ID of the user to retrieve
+ *         description: Numeric ID of the user to delete
  *         schema:
  *           type: integer
  *     responses:

@@ -135,7 +135,8 @@ const userDetail = {
           error: error,
         });
       } else {
-        const deletedUser = await user.destroy();
+        const deletedUser = user;
+        await user.destroy();
         res.status(200);
         res.send({
           message: "user deleted !",
