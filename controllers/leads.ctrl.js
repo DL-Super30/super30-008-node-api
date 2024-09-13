@@ -14,9 +14,9 @@ const leadDetail = {
           offset,
           limit,
           order: [["createdAt", "DESC"]], // Sort by created date
-          attributes: {
+          /* attributes: {
             exclude: ["email", "phone"], // Exclude fields from the response
-          },
+          }, */
         });
 
       // Send the paginated response
@@ -75,6 +75,7 @@ const leadDetail = {
         res.send({
           status: "Error",
           error: "Invalid email format",
+          error,
         });
       } else {
         // General error handling
@@ -95,9 +96,15 @@ const leadDetail = {
           leadStatus: leadStatus, // This will benefit from the leadStatus index
         },
       });
+      let count = await req.LeadModel.count({
+        where: {
+          leadStatus: leadStatus, // This will benefit from the leadStatus index
+        },
+      });
       res.status(200);
       res.send({
         data: leads,
+        totalcount: count,
       });
     } catch (error) {
       console.error("Error fetching leads:", error);
@@ -168,6 +175,174 @@ const leadDetail = {
       res.send({
         status: "Error",
         message: "error occured while updating the user in databse ",
+      });
+    }
+  },
+  PartialUpdateLead: async (req, res) => {
+    console.log("what is the type of " + typeof req.LeadModel);
+    const leadId = req.params.leadId;
+    try {
+      const lead = await req.LeadModel.findByPk(leadId);
+      if (lead) {
+        for (let key in req.body) {
+          //console.log(req.body[key]);
+          console.log(req.body[key]);
+          lead[key] = req.body[key];
+        }
+        res.status(200);
+        res.send({ result: " Partial update of lead is done" });
+      } else {
+        res.status(404);
+        res.send({
+          error: "Not Found",
+          errorDescription:
+            "Lead is not available in API with the given leadId",
+        });
+      }
+      await lead.save();
+    } catch (error) {
+      console.log(error);
+      res.status(500);
+      res.send({
+        status: "Error",
+        message: "error occured while updating the user in databse ",
+        error,
+      });
+    }
+  },
+  getNewLeadCount: async (req, res) => {
+    try {
+      // Ensure req.LeadModel is a valid Sequelize model
+      if (!req.LeadModel || typeof req.LeadModel.count !== "function") {
+        return res.status(400).send({
+          status: "Error",
+          message: "Invalid LeadModel provided",
+        });
+      }
+
+      // Count the number of records with the leadStatus 'new'
+      let count = await req.LeadModel.count({
+        where: {
+          leadStatus: "new", // This will benefit from the leadStatus index
+        },
+      });
+
+      // Debugging: Log the count and the SQL query executed
+      console.log("Count of new leads:", count);
+
+      // Send the count in the response
+      res.status(200).send({
+        status: "success",
+        message: "total new leads count ",
+        newLead: count,
+      });
+    } catch (error) {
+      console.error("Error fetching count:", error);
+      res.status(500).send({
+        status: "Error",
+        message: "An error occurred while fetching the count",
+      });
+    }
+  },
+  getColdLeadCount: async (req, res) => {
+    try {
+      // Ensure req.LeadModel is a valid Sequelize model
+      if (!req.LeadModel || typeof req.LeadModel.count !== "function") {
+        return res.status(400).send({
+          status: "Error",
+          message: "Invalid LeadModel provided",
+        });
+      }
+
+      // Count the number of records with the leadStatus 'new'
+      let count = await req.LeadModel.count({
+        where: {
+          leadStatus: "Cold Lead", // This will benefit from the leadStatus index
+        },
+      });
+
+      // Debugging: Log the count and the SQL query executed
+      console.log("Count of Cold leads:", count);
+
+      // Send the count in the response
+      res.status(200).send({
+        status: "success",
+        message: "total Cold leads count ",
+        coldLead: count,
+      });
+    } catch (error) {
+      console.error("Error fetching count:", error);
+      res.status(500).send({
+        status: "Error",
+        message: "An error occurred while fetching the count",
+      });
+    }
+  },
+  getWarmLeadCount: async (req, res) => {
+    try {
+      // Ensure req.LeadModel is a valid Sequelize model
+      if (!req.LeadModel || typeof req.LeadModel.count !== "function") {
+        return res.status(400).send({
+          status: "Error",
+          message: "Invalid LeadModel provided",
+        });
+      }
+
+      // Count the number of records with the leadStatus 'new'
+      let count = await req.LeadModel.count({
+        where: {
+          leadStatus: "Warm Lead", // This will benefit from the leadStatus index
+        },
+      });
+
+      // Debugging: Log the count and the SQL query executed
+      console.log("Count of Cold leads:", count);
+
+      // Send the count in the response
+      res.status(200).send({
+        status: "success",
+        message: "total Warm leads count ",
+        warmLead: count,
+      });
+    } catch (error) {
+      console.error("Error fetching count:", error);
+      res.status(500).send({
+        status: "Error",
+        message: "An error occurred while fetching the count",
+      });
+    }
+  },
+  getRegistredLeadCount: async (req, res) => {
+    try {
+      // Ensure req.LeadModel is a valid Sequelize model
+      if (!req.LeadModel || typeof req.LeadModel.count !== "function") {
+        return res.status(400).send({
+          status: "Error",
+          message: "Invalid LeadModel provided",
+        });
+      }
+
+      // Count the number of records with the leadStatus 'new'
+      let count = await req.LeadModel.count({
+        where: {
+          leadStatus: "Registered", // This will benefit from the leadStatus index
+        },
+      });
+
+      // Debugging: Log the count and the SQL query executed
+      console.log("Count of Cold leads:", count);
+
+      // Send the count in the response
+      res.status(200).send({
+        status: "success",
+        message: "total Registered leads count ",
+        registeredLead: count,
+      });
+    } catch (error) {
+      console.error("Error fetching count:", error);
+      res.status(500).send({
+        status: "Error",
+        message: "An error occurred while fetching the count",
       });
     }
   },

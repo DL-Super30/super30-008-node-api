@@ -275,4 +275,5 @@ router.post("/", leadDetail.createLead);
 router.get("/:leadSatus", leadDetail.getAll);
 router.delete("/:leadId", leadDetail.delete);
 router.put("/:leadId", leadDetail.updateLead);
+router.patch("/:leadId", leadDetail.PartialUpdateLead);
 module.exports = router;

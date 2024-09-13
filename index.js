@@ -40,8 +40,10 @@ app.use(async (req, res, next) => {
 
 const userRouter = require("./router/user.router");
 const leadRouter = require("./router/leads.router");
+const leadStatusRouter = require("./router/leadstatus.router");
 app.use("/users", userRouter);
 app.use("/leads", leadRouter);
+app.use("/leadstatus", leadStatusRouter);
 // Serve Swagger documentation at /api-docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //app.use("/api-docs-leads", swaggerUi.serve, swaggerUi.setup(swaggerSpec1));
