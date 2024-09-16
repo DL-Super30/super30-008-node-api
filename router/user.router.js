@@ -1,6 +1,6 @@
 const express = require("express");
 
-const autherizationService = require("../middlewear/autherization.mdw");
+//const autherizationService = require("../middlewear/autherization.mdw");
 const userDetail = require("../controllers/users.ctrl");
 const userValidator = require("../validation/user.validation");
 

@@ -1,3 +1,4 @@
+const { Op, Sequelize } = require("sequelize");
 const leadDetail = {
   getLeads: async (req, res) => {
     try {
@@ -96,15 +97,9 @@ const leadDetail = {
           leadStatus: leadStatus, // This will benefit from the leadStatus index
         },
       });
-      let count = await req.LeadModel.count({
-        where: {
-          leadStatus: leadStatus, // This will benefit from the leadStatus index
-        },
-      });
       res.status(200);
       res.send({
         data: leads,
-        totalcount: count,
       });
     } catch (error) {
       console.error("Error fetching leads:", error);
@@ -210,7 +205,7 @@ const leadDetail = {
       });
     }
   },
-  getNewLeadCount: async (req, res) => {
+  /* getLeadCount: async (req, res) => {
     try {
       // Ensure req.LeadModel is a valid Sequelize model
       if (!req.LeadModel || typeof req.LeadModel.count !== "function") {
@@ -221,20 +216,16 @@ const leadDetail = {
       }
 
       // Count the number of records with the leadStatus 'new'
-      let count = await req.LeadModel.count({
-        where: {
-          leadStatus: "new", // This will benefit from the leadStatus index
-        },
-      });
+      let count = await req.LeadModel.count();
 
       // Debugging: Log the count and the SQL query executed
-      console.log("Count of new leads:", count);
+      console.log("Count of Total leads:", count);
 
       // Send the count in the response
       res.status(200).send({
         status: "success",
-        message: "total new leads count ",
-        newLead: count,
+        message: "total leads count ",
+        TotalLead: count,
       });
     } catch (error) {
       console.error("Error fetching count:", error);
@@ -243,107 +234,113 @@ const leadDetail = {
         message: "An error occurred while fetching the count",
       });
     }
-  },
-  getColdLeadCount: async (req, res) => {
+  }, */
+  getLeadCount: async (req, res) => {
     try {
       // Ensure req.LeadModel is a valid Sequelize model
-      if (!req.LeadModel || typeof req.LeadModel.count !== "function") {
+      if (!req.LeadModel || typeof req.LeadModel.findAll !== "function") {
         return res.status(400).send({
           status: "Error",
           message: "Invalid LeadModel provided",
         });
       }
 
-      // Count the number of records with the leadStatus 'new'
-      let count = await req.LeadModel.count({
-        where: {
-          leadStatus: "Cold Lead", // This will benefit from the leadStatus index
-        },
+      // Fetch the count of leads grouped by leadStatus
+      const leadCounts = await req.LeadModel.findAll({
+        attributes: [
+          "leadStatus", // Group by leadStatus
+          [Sequelize.fn("COUNT", Sequelize.col("id")), "leadCount"], // Count the number of leads per status
+        ],
+        group: ["leadStatus"], // Group by leadStatus
       });
 
-      // Debugging: Log the count and the SQL query executed
-      console.log("Count of Cold leads:", count);
+      // Debugging: Log the result and the SQL query executed
+      console.log("Lead counts by status:", leadCounts);
 
-      // Send the count in the response
+      // Send the lead counts in the response
       res.status(200).send({
         status: "success",
-        message: "total Cold leads count ",
-        coldLead: count,
+        message: "Lead counts by status",
+        data: leadCounts,
       });
     } catch (error) {
-      console.error("Error fetching count:", error);
+      console.error("Error fetching lead counts by status:", error);
       res.status(500).send({
         status: "Error",
-        message: "An error occurred while fetching the count",
+        message: "An error occurred while fetching the lead counts by status",
       });
     }
   },
-  getWarmLeadCount: async (req, res) => {
-    try {
-      // Ensure req.LeadModel is a valid Sequelize model
-      if (!req.LeadModel || typeof req.LeadModel.count !== "function") {
-        return res.status(400).send({
-          status: "Error",
-          message: "Invalid LeadModel provided",
-        });
-      }
 
-      // Count the number of records with the leadStatus 'new'
-      let count = await req.LeadModel.count({
+  // Function to get leads created today
+  getTodayLeads: async (req, res) => {
+    try {
+      // Get the start and end of today
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0); // Set to midnight (start of day)
+
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999); // Set to the end of the day
+
+      // Fetch leads created today
+      const todayLeads = await req.LeadModel.count({
         where: {
-          leadStatus: "Warm Lead", // This will benefit from the leadStatus index
+          createdAt: {
+            [Op.gte]: startOfToday, // createdAt is greater than or equal to start of today
+            [Op.lt]: endOfToday, // createdAt is less than the end of today
+          },
         },
       });
-
-      // Debugging: Log the count and the SQL query executed
-      console.log("Count of Cold leads:", count);
-
-      // Send the count in the response
-      res.status(200).send({
-        status: "success",
-        message: "total Warm leads count ",
-        warmLead: count,
+      res.status(200);
+      res.send({
+        status: "Success",
+        message: "Today's Lead count",
+        data: todayLeads,
       });
     } catch (error) {
-      console.error("Error fetching count:", error);
-      res.status(500).send({
-        status: "Error",
-        message: "An error occurred while fetching the count",
-      });
+      res.status(500);
+      console.error("Error fetching today's leads:", error);
     }
   },
-  getRegistredLeadCount: async (req, res) => {
+  getLeadCountByHour: async (req, res) => {
     try {
-      // Ensure req.LeadModel is a valid Sequelize model
-      if (!req.LeadModel || typeof req.LeadModel.count !== "function") {
-        return res.status(400).send({
-          status: "Error",
-          message: "Invalid LeadModel provided",
-        });
-      }
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0); // Set to midnight (start of today)
 
-      // Count the number of records with the leadStatus 'new'
-      let count = await req.LeadModel.count({
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999); // Set to the end of today
+      // Fetch the count of leads created in each hour
+      const leadCountByHour = await req.LeadModel.findAll({
+        attributes: [
+          [
+            Sequelize.fn("DATE_TRUNC", "hour", Sequelize.col("createdAt")),
+            "hour",
+          ], // Group by each hour
+          [Sequelize.fn("COUNT", Sequelize.col("id")), "leadCount"], // Count the number of leads per hour
+        ],
         where: {
-          leadStatus: "Registered", // This will benefit from the leadStatus index
+          createdAt: {
+            [Sequelize.Op.gte]: startOfToday, // createdAt is greater than or equal to start of today
+            [Sequelize.Op.lt]: endOfToday, // createdAt is less than the end of today
+          },
         },
+        group: [Sequelize.fn("DATE_TRUNC", "hour", Sequelize.col("createdAt"))], // Grouping by truncated hour
+        order: [
+          [
+            Sequelize.fn("DATE_TRUNC", "hour", Sequelize.col("createdAt")),
+            "ASC",
+          ],
+        ], // Order by hour ascending
       });
 
-      // Debugging: Log the count and the SQL query executed
-      console.log("Count of Cold leads:", count);
-
-      // Send the count in the response
-      res.status(200).send({
-        status: "success",
-        message: "total Registered leads count ",
-        registeredLead: count,
+      res.status(200);
+      res.send({
+        status: "Success",
+        message: "counts of leads on hourly basis",
+        data: leadCountByHour,
       });
     } catch (error) {
-      console.error("Error fetching count:", error);
-      res.status(500).send({
-        status: "Error",
-        message: "An error occurred while fetching the count",
-      });
+      console.error("Error fetching lead counts by hour:", error);
     }
   },
 };

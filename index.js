@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const { Sequelize } = require("sequelize");
 const createUserModel = require("./model/userSchema");
 const createLeadModel = require("./model/leadsSchema");
+const createOpportunityModel = require("./model/opportunitySchema");
 const swaggerSpec = require("./swagger");
 const swaggerUi = require("swagger-ui-express");
 
@@ -15,14 +16,16 @@ const sequelize = new Sequelize("User", "postgres", "root", {
 app.use(bodyParser.json());
 let UserModel;
 let LeadModel;
+let OpporModel;
 const connection = async () => {
   try {
     await sequelize.authenticate();
     UserModel = await createUserModel(sequelize);
     LeadModel = await createLeadModel(sequelize);
+    OpporModel = await createOpportunityModel(sequelize);
     await sequelize.sync();
     console.log("database is synced ");
-    console.log(UserModel);
+    //console.log(UserModel);
     console.log("Connection has been established successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
@@ -30,20 +33,23 @@ const connection = async () => {
 };
 
 app.use(async (req, res, next) => {
-  if (!UserModel || !LeadModel) {
+  if (!UserModel || !LeadModel || !OpporModel) {
     await connection();
   }
   req.UserModel = UserModel; // Attach UserModel to request
   req.LeadModel = LeadModel;
+  req.OpporModel = OpporModel;
   next();
 });
 
 const userRouter = require("./router/user.router");
 const leadRouter = require("./router/leads.router");
 const leadStatusRouter = require("./router/leadstatus.router");
+const OpportunityRouter = require("./router/opportunity.router");
 app.use("/users", userRouter);
 app.use("/leads", leadRouter);
 app.use("/leadstatus", leadStatusRouter);
+app.use("/opportunity", OpportunityRouter);
 // Serve Swagger documentation at /api-docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //app.use("/api-docs-leads", swaggerUi.serve, swaggerUi.setup(swaggerSpec1));
