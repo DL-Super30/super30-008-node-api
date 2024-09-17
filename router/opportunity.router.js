@@ -5,7 +5,7 @@ const opportunityDetail = require("../controllers/opportunity.ctrl");
 const router = express.Router();
 /**
  * @swagger
- * /opportunity:
+ * /api/opportunity:
  *   get:
  *     summary: Retrieve a list of Opportunities
  *     description: Retrieve all Opportunities from the database
@@ -43,7 +43,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /Opportunity:
+ * /api/opportunity:
  *   post:
  *     summary: Create a new Opportunity
  *     description: Add a new Opportunity to the database
@@ -201,7 +201,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /Opportunity/{id}:
+ * /api/opportunity/{id}:
  *   delete:
  *     summary: Delete a Opportunity by ID
  *     description: Delete a single Opportunity from the database by their unique ID
@@ -231,7 +231,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /Opportunity/{id}:
+ * /api/opportunity/{id}:
  *   put:
  *     summary: Update an Opportunity by ID
  *     description: Update a single Opportunity in the database by their unique ID
@@ -398,7 +398,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /Opportunity/{id}:
+ * /api/opportunity/{id}:
  *   patch:
  *     summary: Partially update an Opportunity by ID
  *     description: Apply partial updates to a single Opportunity in the database by their unique ID
@@ -565,8 +565,7 @@ const router = express.Router();
 
 router.get("/", opportunityDetail.getOpportunity);
 router.post("/", opportunityDetail.createOpport);
-//router.get("/:leadSatus", leadDetail.getAll);
 router.delete("/:id", opportunityDetail.delete);
 router.put("/:id", opportunityDetail.updateOpportunity);
-router.patch("/:id", opportunityDetail.PartialUpdateLead);
+router.patch("/:id", opportunityDetail.PartialUpdateOpportunity);
 module.exports = router;

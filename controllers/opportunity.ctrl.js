@@ -1,4 +1,3 @@
-const { Op, Sequelize } = require("sequelize");
 const opportunityDetail = {
   getOpportunity: async (req, res) => {
     try {
@@ -58,9 +57,10 @@ const opportunityDetail = {
       description,
     } = req.body;
     try {
-      phone = cc + phone;
+      //phone = cc + phone;
       const newOpport = await req.OpporModel.create({
         name: name,
+        cc: cc,
         phone: phone,
         email: email,
         feeQuoted: feeQuoted,
@@ -172,9 +172,10 @@ const opportunityDetail = {
     } = req.body;
     try {
       const opportunity = await req.OpporModel.findByPk(id);
-      phone = cc + phone;
+      //phone = cc + phone;
       const updatedOpport = await opportunity.update({
         name: name,
+        cc: cc,
         phone: phone,
         email: email,
         feeQuoted: feeQuoted,
@@ -207,7 +208,7 @@ const opportunityDetail = {
       });
     }
   },
-  PartialUpdateLead: async (req, res) => {
+  PartialUpdateOpportunity: async (req, res) => {
     console.log("what is the type of " + typeof req.OpporModel);
     const id = req.params.id;
     try {
@@ -227,7 +228,7 @@ const opportunityDetail = {
           errorDescription: "Lead is not available in API with the given Id",
         });
       }
-      await lead.save();
+      await opportunity.save();
     } catch (error) {
       console.log(error);
       res.status(500);

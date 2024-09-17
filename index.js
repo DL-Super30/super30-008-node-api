@@ -5,6 +5,7 @@ const { Sequelize } = require("sequelize");
 const createUserModel = require("./model/userSchema");
 const createLeadModel = require("./model/leadsSchema");
 const createOpportunityModel = require("./model/opportunitySchema");
+const createLearnerModel = require("./model/learnerSchema");
 const swaggerSpec = require("./swagger");
 const swaggerUi = require("swagger-ui-express");
 
@@ -17,12 +18,14 @@ app.use(bodyParser.json());
 let UserModel;
 let LeadModel;
 let OpporModel;
+let LearnerModel;
 const connection = async () => {
   try {
     await sequelize.authenticate();
     UserModel = await createUserModel(sequelize);
     LeadModel = await createLeadModel(sequelize);
     OpporModel = await createOpportunityModel(sequelize);
+    LearnerModel = await createLearnerModel(sequelize);
     await sequelize.sync();
     console.log("database is synced ");
     //console.log(UserModel);
@@ -39,6 +42,7 @@ app.use(async (req, res, next) => {
   req.UserModel = UserModel; // Attach UserModel to request
   req.LeadModel = LeadModel;
   req.OpporModel = OpporModel;
+  req.LearnerModel = LearnerModel;
   next();
 });
 
@@ -46,10 +50,12 @@ const userRouter = require("./router/user.router");
 const leadRouter = require("./router/leads.router");
 const leadStatusRouter = require("./router/leadstatus.router");
 const OpportunityRouter = require("./router/opportunity.router");
-app.use("/users", userRouter);
-app.use("/leads", leadRouter);
-app.use("/leadstatus", leadStatusRouter);
-app.use("/opportunity", OpportunityRouter);
+const LearnerRouter = require("./router/learner.router");
+app.use("/api/users", userRouter);
+app.use("/api/leads", leadRouter);
+app.use("/api/leadstatus", leadStatusRouter);
+app.use("/api/opportunity", OpportunityRouter);
+app.use("/api/learner", LearnerRouter);
 // Serve Swagger documentation at /api-docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //app.use("/api-docs-leads", swaggerUi.serve, swaggerUi.setup(swaggerSpec1));

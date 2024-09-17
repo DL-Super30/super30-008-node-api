@@ -8,7 +8,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users:
+ * /api/users:
  *   get:
  *     summary: Retrieve a list of users
  *     description: Retrieve all users from the database
@@ -32,7 +32,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users/{id}:
+ * /api/users/{id}:
  *   put:
  *     summary: Update a user by ID
  *     description: Update a single user in the database by their unique ID
@@ -76,7 +76,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users/register:
+ * /api/users/register:
  *   post:
  *     summary: Create a new user
  *     description: Add a new user to the database
@@ -113,7 +113,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users/{id}:
+ * /api/users/{id}:
  *   delete:
  *     summary: Delte a user by ID
  *     description: Delete a single user from the database by their unique ID
@@ -144,7 +144,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users/login:
+ * /api/users/login:
  *   post:
  *     summary: Login with your credential
  *     description: login user
@@ -179,7 +179,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users/{id}:
+ * /api/users/{id}:
  *   get:
  *     summary: Get a user by ID
  *     description: Retrieve a single user from the database by their unique ID

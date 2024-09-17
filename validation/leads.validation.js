@@ -2,12 +2,22 @@ const Joi = require("joi");
 
 const leadValidator = async (req, res, next) => {
   try {
-    const schema = Joi.object({
-      leadname: Joi.string().alphanum().min(4).max(30).required(),
+    // Define the Joi validation schema
+    const opportunitySchema = Joi.object({
+      leadname: Joi.string().required(),
+      phone: Joi.string()
+        .pattern(/^[0-9]+$/) // Only digits allowed
+        .required(),
       email: Joi.string().email().required(),
-      phone: Joi.string().min(10).max(15).required(),
+      feeQuoted: Joi.number().integer().required(),
+      batchTiming: Joi.string().required(),
+      leadStatus: Joi.string().required(),
+      leadSource: Joi.string().required(),
+      course: Joi.string().required(),
+      selectedClassMode: Joi.string().required(), // Example of an enum-like validation
     });
-    const value = await schema.validateAsync(req.body);
+
+    const value = await leadValidator.validateAsync(req.body);
     next();
   } catch (error) {
     console.log(error.message);

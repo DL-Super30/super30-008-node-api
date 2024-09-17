@@ -181,7 +181,7 @@ const leadDetail = {
       if (lead) {
         for (let key in req.body) {
           //console.log(req.body[key]);
-          console.log(req.body[key]);
+          // console.log(req.body[key]);
           lead[key] = req.body[key];
         }
         res.status(200);

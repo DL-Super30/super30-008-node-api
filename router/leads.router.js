@@ -1,11 +1,11 @@
 const express = require("express");
 const leadDetail = require("../controllers/leads.ctrl");
-const leadValidator = require("../validation/leads.validation");
+//const leadValidator = require("../validation/leads.validation");
 
 const router = express.Router();
 /**
  * @swagger
- * /leads:
+ * /api/leads:
  *   get:
  *     summary: Retrieve a list of leads
  *     description: Retrieve all leads from the database
@@ -43,7 +43,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /leads/{leadId}:
+ * /api/leads/{leadId}:
  *   put:
  *     summary: Update a lead by ID
  *     description: Update a single lead in the database by their unique ID
@@ -147,7 +147,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /leads:
+ * /api/leads:
  *   post:
  *     summary: Create a new lead
  *     description: Add a new lead to the database
@@ -242,7 +242,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /leads/{leadId}:
+ * /api/leads/{leadId}:
  *   delete:
  *     summary: Delete a lead by ID
  *     description: Delete a single lead from the database by their unique ID

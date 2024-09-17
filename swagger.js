@@ -22,6 +22,7 @@ const options = {
     "./router/leads.router.js",
     "./router/leadstatus.router.js",
     "./router/opportunity.router.js",
+    "./router/learner.router.js",
   ], // Path to the API docs
 };
 const swaggerSpec = swaggerJSDoc(options);
