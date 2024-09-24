@@ -1,6 +1,8 @@
 import express from 'express';
 import { connection } from './postgres/postgres.js';
 import router from './view/routes.js';
+//import router from './view/leadRoutes.js';
+
 import cors from 'cors';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
@@ -31,8 +33,15 @@ const swaggerDefinition = {
 
 const swaggerOptions = {
   swaggerDefinition,
-  apis: ['./controller/userController.js', './view/routes.js'], // Path to the files where your routes and controllers are defined
+  apis: [
+    './controller/userController.js', 
+    './controller/leadController.js',
+    './view/userRoutes.js',
+     './view/leadRoutes.js'
+  ],
+    
 };
+
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
