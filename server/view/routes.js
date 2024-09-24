@@ -1,15 +1,10 @@
 import express from 'express';
-import { getAllUser , addUser ,updateUser ,deleteUser ,loginUser} from '../controller/userController.js';
+import userRoutes from './userRoutes.js'; 
+import leadRoutes from './leadRoutes.js'; 
 
+const router = express.Router();
 
-
-
-const router=express.Router();
-router.get("/getAll",getAllUser );
-router.post("/addUser",addUser );
-router.put("/user/:id", updateUser);
-router.delete("/user/:id", deleteUser);
-router.post("/login", loginUser);
-
+router.use(userRoutes);
+router.use(leadRoutes); 
 
 export default router;
