@@ -326,6 +326,57 @@ const leadDetail = {
       console.error("Error fetching lead counts by hour:", error);
     }
   },
+  convertToOpportunity: async (req, res) => {
+    const leadId = req.params.leadId;
+    try {
+      // Find the lead
+      const lead = await req.LeadModel.findByPk(leadId);
+      if (!lead) {
+        return res.status(404).send({
+          status: "Error",
+          message: "Lead not found",
+        });
+      }
+
+      // Create a new opportunity from the lead data
+      const newOpportunity = await req.OpporModel.create({
+        name: lead.leadname,
+        cc: lead.cc || '',
+        phone: lead.phone,
+        email: lead.email,
+        feeQuoted: lead.feeQuoted,
+        batchTiming: lead.batchTiming,
+        leadStatus: lead.leadStatus,
+        stack: lead.stack || '',
+        ClassMode: lead.selectedClassMode,
+        opportunityStatus: 'New',
+        opportunitySatge: 'Initial Contact',
+        DemoAttendedStage: '',
+        visitedStage: '',
+        lostOpportunityReason: '',
+        nextFollowUp: new Date(),
+        leadSource: lead.leadSource,
+        course: lead.course,
+        description: '',
+      });
+
+      // Delete the original lead
+      await lead.destroy();
+
+      res.status(200).send({
+        status: "Success",
+        message: "Lead converted to opportunity successfully",
+        data: newOpportunity,
+      });
+    } catch (error) {
+      console.error("Error converting lead to opportunity:", error);
+      res.status(500).send({
+        status: "Error",
+        message: "An error occurred while converting the lead to an opportunity",
+        error: error.message,
+      });
+    }
+  }
 };
 
 module.exports = leadDetail;
