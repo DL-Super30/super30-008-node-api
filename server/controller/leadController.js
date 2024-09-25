@@ -37,7 +37,7 @@ import { LeadModel } from "../postgres/postgres.js";
 const getLeads = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; 
-    const limit = parseInt(req.query.limit) || 10; 
+    const limit = parseInt(req.query.limit) || 15; 
     const offset = (page - 1) * limit;
 
     const { rows: leads, count: totalLeads } = await LeadModel.findAndCountAll({
