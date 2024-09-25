@@ -2,38 +2,21 @@ const { Op, Sequelize } = require("sequelize");
 const leadDetail = {
   getLeads: async (req, res) => {
     try {
-      // Get page and limit from the request query, set defaults if not provided
-      const page = parseInt(req.query.page) || 1; // Default to page 1
-      const limit = parseInt(req.query.limit) || 10; // Default to 10 leads per page
+      // Get all leads without pagination
+      const leads = await req.LeadModel.findAll({
+        order: [["createdAt", "DESC"]], // Sort by created date
+      });
 
-      // Calculate the offset
-      const offset = (page - 1) * limit;
-
-      // Fetch leads with pagination
-      const { rows: leads, count: totalLeads } =
-        await req.LeadModel.findAndCountAll({
-          offset,
-          limit,
-          order: [["createdAt", "DESC"]], // Sort by created date
-          /* attributes: {
-            exclude: ["email", "phone"], // Exclude fields from the response
-          }, */
-        });
-
-      // Send the paginated response
+      // Send all leads in the response
       res.send({
         data: leads,
         meta: {
-          totalLeads,
-          totalPages: Math.ceil(totalLeads / limit),
-          currentPage: page,
-          perPage: limit,
+          totalLeads: leads.length,
         },
       });
     } catch (error) {
       console.error("Error fetching leads:", error);
-      res.status(500);
-      res.send({ error: "Failed to fetch leads" });
+      res.status(500).send({ error: "Failed to fetch leads" });
     }
   },
   createLead: async (req, res) => {
@@ -49,7 +32,7 @@ const leadDetail = {
       selectedClassMode,
     } = req.body;
     try {
-      phone = "+91" + phone;
+      phone = "+91 " + phone;
       const newLead = await req.LeadModel.create({
         leadname: leadname,
         phone: phone,
@@ -146,7 +129,7 @@ const leadDetail = {
     } = req.body;
     try {
       const lead = await req.LeadModel.findByPk(leadId);
-      phone = "+91" + phone;
+      phone =  phone;
       const updatedLead = await lead.update({
         leadname: leadname,
         phone: phone,

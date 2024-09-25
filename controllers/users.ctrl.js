@@ -34,56 +34,52 @@ const userDetail = {
     }
   },
   loginUser: async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, rememberMe } = req.body; // Capture the rememberMe value
     console.log(typeof username);
     try {
-      // Find user by username and password
-      const user = await req.UserModel.findOne({
-        where: {
-          username: username,
-        },
-      });
-
-      if (user) {
-        const isSimilar = await bcrypt.compare(
-          req.body.password,
-          user.password
-        );
-        if (isSimilar) {
-          const token = await jwt.sign(
-            {
-              userId: user.id,
-              email: user.email,
-              username: user.username,
-              role: "admin",
-            },
-            "No one can still my token",
-            { expiresIn: "24h" }
-          );
-          res.status(201);
-          res.send({
-            status: " valid user detail, please procced further ",
-            token,
-          });
-        }
-
-        // User found, return user data
-      } else {
-        // User not found, return 409
-        res.status(409);
-        res.send({
-          error: "Wrong Password",
-          status: "Wrong Password, Please use correct password ",
+        const user = await req.UserModel.findOne({
+            where: { username: username },
         });
-      }
+
+        if (user) {
+            const isSimilar = await bcrypt.compare(password, user.password);
+            if (isSimilar) {
+                // Set token expiry based on rememberMe
+                const tokenExpiry = rememberMe ? '30d' : '24h';
+
+                const token = await jwt.sign(
+                    {
+                        userId: user.id,
+                        email: user.email,
+                        username: user.username,
+                        role: "admin",
+                    },
+                    "No one can still my token", // Secret key
+                    { expiresIn: tokenExpiry }
+                );
+                
+                res.status(201).send({
+                    status: "Valid user detail, please proceed further",
+                    token,
+                });
+            } else {
+                res.status(409).send({
+                    error: "Wrong Password",
+                    status: "Wrong password, please use correct password",
+                });
+            }
+        } else {
+            res.status(404).send({
+                error: "User not found",
+                status: "No user with this username exists",
+            });
+        }
     } catch (error) {
-      console.error("Error finding user:", error);
-      res.status(500);
-      res.send({
-        error: error,
-      });
+        console.error("Error finding user:", error);
+        res.status(500).send({ error });
     }
-  },
+},
+
   registerUser: async (req, res) => {
     const { username, email, password } = req.body;
     try {
