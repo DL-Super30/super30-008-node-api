@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
  * /login:
  *   post:
  *     summary: Login a user
- *     description: Authenticates a user with a name and password.
+ *     description: Authenticates a user with a username and password.
  *     requestBody:
  *       required: true
  *       content:
@@ -14,7 +14,7 @@ import bcrypt from 'bcrypt';
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               username:
  *                 type: string
  *               password:
  *                 type: string
@@ -27,10 +27,10 @@ import bcrypt from 'bcrypt';
  *         description: Internal server error
  */
 export const loginUser = async (req, res) => {
-        const { name, password } = req.body;
+        const { username, password } = req.body;
         try {
              
-             const user = await UserModel.findOne({where:{name:name}})
+             const user = await UserModel.findOne({where:{username:username}})
              if (!user) {
                 return res.status(401).json({ error: "Invalid username or password" });
             }
@@ -80,7 +80,7 @@ export const loginUser = async (req, res) => {
  * /addUser:
  *   post:
  *     summary: Add a new user
- *     description: Create a new user with the given name and password.
+ *     description: Create a new user with the given username and password.
  *     requestBody:
  *       required: true
  *       content:
@@ -88,7 +88,7 @@ export const loginUser = async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               username:
  *                 type: string
  *               password:
  *                 type: string
@@ -98,17 +98,17 @@ export const loginUser = async (req, res) => {
  *       200:
  *         description: User added successfully
  *       400:
- *         description: Name and password are required
+ *         description: username and password are required
  *       500:
  *         description: Internal server error
  */
  export const addUser = async (req, res) => {
-    const { name, password,id} = req.body;
+    const { username, password,id} = req.body;
 
 
-    // Ensure name and password are provided
-    if (!name || !password) {
-        return res.status(400).json({ error: "Name and password are required" });
+    // Ensure username and password are provided
+    if (!username || !password) {
+        return res.status(400).json({ error: "username and password are required" });
     }
 
     try {
@@ -116,7 +116,7 @@ export const loginUser = async (req, res) => {
         if (user === null) {
             const saltRounds = 10; // Number of salt rounds for bcrypt
             const hashedPassword = await bcrypt.hash(password, saltRounds);
-            await UserModel.create({ name, password: hashedPassword, id });
+            await UserModel.create({ username, password: hashedPassword, id });
             return res.status(200).json({ message: "User added successfully" });
             
   
@@ -137,7 +137,7 @@ export const loginUser = async (req, res) => {
  *     description: Update an existing user by ID.
  *     parameters:
  *       - in: path
- *         name: id
+ *         username: id
  *         required: true
  *         schema:
  *           type: integer
@@ -149,7 +149,7 @@ export const loginUser = async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               username:
  *                 type: string
  *               password:
  *                 type: string
@@ -163,9 +163,9 @@ export const loginUser = async (req, res) => {
  */
  export const updateUser = async (req, res) =>{
     const  id  = req.params.id;
-    const { name, password } = req.body;
-     if (!name && !password) {
-      return res.status(400).json({ error: "At least one field (name or password) must be provided" });
+    const { username, password } = req.body;
+     if (!username && !password) {
+      return res.status(400).json({ error: "At least one field (username or password) must be provided" });
     }
     try{
         const user = await UserModel.findOne({ where: { id: id } });
@@ -173,7 +173,7 @@ export const loginUser = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
             }
         const updatedData = {};
-        if (name) updatedData.name = name;
+        if (username) updatedData.username = username;
         if (password) updatedData.password = password;
           await UserModel.update(updatedData, { where: { id: id } });
         return res.status(200).json({ message: "User updated successfully" });
@@ -196,7 +196,7 @@ export const loginUser = async (req, res) => {
  *     description: Delete a user by ID.
  *     parameters:
  *       - in: path
- *         name: id
+ *         username: id
  *         required: true
  *         schema:
  *           type: integer
