@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 /**
  * @swagger
- * /login:
+ * /api/login:
  *   post:
  *     summary: Login a user
  *     description: Authenticates a user with a username and password.
@@ -51,7 +51,7 @@ export const loginUser = async (req, res) => {
 
 /**
  * @swagger
- * /getAll:
+ * /api/getAll:
  *   get:
  *     summary: Get all users
  *     description: Retrieve a list of all users.
@@ -77,7 +77,7 @@ export const loginUser = async (req, res) => {
 
 /**
  * @swagger
- * /addUser:
+ * /api/addUser:
  *   post:
  *     summary: Add a new user
  *     description: Create a new user with the given username and password.
@@ -131,7 +131,7 @@ export const loginUser = async (req, res) => {
 
 /**
  * @swagger
- * /user/{id}:
+ * /api/user/{id}:
  *   put:
  *     summary: Update a user
  *     description: Update an existing user by ID.
@@ -190,7 +190,7 @@ export const loginUser = async (req, res) => {
 
 /**
  * @swagger
- * /user/{id}:
+ * /api/user/{id}:
  *   delete:
  *     summary: Delete a user
  *     description: Delete a user by ID.
