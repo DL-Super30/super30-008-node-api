@@ -1,7 +1,8 @@
-// postgres.js
+
 import { Sequelize } from "sequelize";
 import { createUserModel } from "../model/userschema.js";
-import { createLeadModel } from "../model/leadschema.js";
+import { createLeadModel } from "../model/leadSchema.js";
+import { createOpportunityModel} from "../model/opportunitySchema.js";
 
 const sequelize = new Sequelize('postgres', 'postgres', 'root', {
   host: 'localhost',
@@ -10,6 +11,7 @@ const sequelize = new Sequelize('postgres', 'postgres', 'root', {
 
 let UserModel = null;
 let LeadModel = null;
+let OpportunityModel = null;
 
 const connection = async () => {
   try {
@@ -18,6 +20,7 @@ const connection = async () => {
 
     UserModel = await createUserModel(sequelize);
     LeadModel = await createLeadModel(sequelize);
+    OpportunityModel = await createOpportunityModel(sequelize);
 
     await sequelize.sync();
 
@@ -32,4 +35,5 @@ export {
   connection,
   UserModel,
   LeadModel,
+  OpportunityModel,
 };
