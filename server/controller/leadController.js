@@ -10,7 +10,7 @@ import { LeadModel } from "../postgres/postgres.js";
 
 /**
  * @swagger
- * /leads:
+ * /api/leads:
  *   get:
  *     summary: Retrieve a paginated list of leads
  *     tags: [Leads]
@@ -64,7 +64,7 @@ const getLeads = async (req, res) => {
 
 /**
  * @swagger
- * /leads:
+ * /api/leads:
  *   post:
  *     summary: Create a new lead
  *     tags: [Leads]
@@ -148,7 +148,7 @@ const createLead = async (req, res) => {
 
 /**
  * @swagger
- * /leads/status/{leadStatus}:
+ * /api/leads/status/{leadStatus}:
  *   get:
  *     summary: Retrieve leads by status
  *     tags: [Leads]
@@ -186,7 +186,7 @@ const getAllLeadsByStatus = async (req, res) => {
 
 /**
  * @swagger
- * /leads/{id}:
+ * /api/leads/{id}:
  *   put:
  *     summary: Update an existing lead
  *     tags: [Leads]
@@ -274,7 +274,7 @@ const updateLead = async (req, res) => {
 
 /**
  * @swagger
- * /leads/{id}:
+ * /api/leads/{id}:
  *   delete:
  *     summary: Delete a lead
  *     tags: [Leads]
