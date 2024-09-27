@@ -1,7 +1,7 @@
 import express from 'express';
 import { connection } from './postgres/postgres.js';
 import router from './view/routes.js';
-//import router from './view/leadRoutes.js';
+
 
 import cors from 'cors';
 import swaggerJsdoc from 'swagger-jsdoc';
@@ -34,10 +34,12 @@ const swaggerDefinition = {
 const swaggerOptions = {
   swaggerDefinition,
   apis: [
-    './controller/userController.js', 
+    './controller/userController.js',
     './controller/leadController.js',
+    './controller/opportunityController.js', 
     './view/userRoutes.js',
-     './view/leadRoutes.js'
+    './view/leadRoutes.js',
+    './view/opportunityRoutes.js'
   ],
     
 };
@@ -47,7 +49,7 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
-// Use your existing routes
+//  existing routes
 app.use(router);
 app.listen(PORT,()=>{
    console.log(`server is running at post ${PORT}`) ;
