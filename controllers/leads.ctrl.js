@@ -129,7 +129,7 @@ const leadDetail = {
     } = req.body;
     try {
       const lead = await req.LeadModel.findByPk(leadId);
-      phone =  phone;
+      phone = phone;
       const updatedLead = await lead.update({
         leadname: leadname,
         phone: phone,
@@ -326,10 +326,11 @@ const leadDetail = {
       console.error("Error fetching lead counts by hour:", error);
     }
   },
-  convertToOpportunity: async (req, res) => {
+  convertLead: async (req, res) => {
     const leadId = req.params.leadId;
+    const { convertTo } = req.body;
+  
     try {
-      // Find the lead
       const lead = await req.LeadModel.findByPk(leadId);
       if (!lead) {
         return res.status(404).send({
@@ -337,46 +338,101 @@ const leadDetail = {
           message: "Lead not found",
         });
       }
-
-      // Create a new opportunity from the lead data
-      const newOpportunity = await req.OpporModel.create({
-        name: lead.leadname,
-        cc: lead.cc || '',
-        phone: lead.phone,
-        email: lead.email,
-        feeQuoted: lead.feeQuoted,
-        batchTiming: lead.batchTiming,
-        leadStatus: lead.leadStatus,
-        stack: lead.stack || '',
-        ClassMode: lead.selectedClassMode,
-        opportunityStatus: 'New',
-        opportunitySatge: 'Initial Contact',
-        DemoAttendedStage: '',
-        visitedStage: '',
-        lostOpportunityReason: '',
-        nextFollowUp: new Date(),
-        leadSource: lead.leadSource,
-        course: lead.course,
-        description: '',
-      });
-
-      // Delete the original lead
+  
+      let convertedEntity;
+  
+      if (convertTo === 'learner') {
+        // Validate required fields
+        if (!lead.leadname || !lead.phone || !lead.email) {
+          return res.status(400).send({
+            status: "Error",
+            message: "Missing essential lead information (leadname, phone, email) for learner conversion",
+          });
+        }
+  
+        // Helper function to parse course to integer or return null
+        const parseCourse = (course) => {
+          const courseId = parseInt(course, 10);
+          return isNaN(courseId) ? null : courseId;
+        };
+  
+        // Create a learner from the lead
+        convertedEntity = await req.LearnerModel.create({
+          firstname: lead.leadname.split(' ')[0],
+          lastname: lead.leadname.split(' ').slice(1).join(' ') || '',
+          phone: lead.phone,
+          email: lead.email,
+          registeredDate: new Date(),
+          source: lead.leadSource || 'Unknown',
+          registeredCourse: parseCourse(lead.course),
+          modeOfClass: lead.selectedClassMode || null,
+          batchTiming: lead.batchTiming || null,
+          leadCreatedDate: lead.createdAt,
+          description: lead.description || '',
+          learnerStage: 'New',
+          nextFollowUp: new Date(),
+          techStack: lead.course || null, // Store the original course name here if it's not a number
+          // Add other fields as needed, with appropriate default values
+        });
+  
+      } else if (convertTo === 'opportunity') {
+        if (!lead.leadname || !lead.phone || !lead.email) {
+          return res.status(400).send({
+            status: "Error",
+            message: "Missing essential lead information (leadname, phone, email) for opportunity conversion",
+          });
+        }
+  
+        // Create an opportunity from the lead
+        convertedEntity = await req.OpporModel.create({
+          name: lead.leadname,
+          cc: lead.cc || '', // Default value if `cc` is missing
+          phone: lead.phone,
+          email: lead.email,
+          feeQuoted: lead.feeQuoted || 0, // Ensure a valid fee value
+          batchTiming: lead.batchTiming || 'Not Assigned',
+          leadStatus: lead.leadStatus || 'Unassigned',
+          stack: lead.stack || 'General', // Default stack
+          ClassMode: lead.selectedClassMode || 'Online', // Default mode of class
+          opportunityStatus: 'New', // Default opportunity status
+          opportunitySatge: 'Initial Contact', // Set opportunityStage (correct spelling)
+          DemoAttendedStage: '',
+          visitedStage: '',
+          lostOpportunityReason: '',
+          nextFollowUp: new Date(), // Default to the current date
+          leadSource: lead.leadSource || 'Unknown', // Handle missing lead source
+          course: lead.course || 'Not Assigned', // Default course value
+          description: '',
+        });
+  
+      } 
+      else {
+        return res.status(400).send({
+          status: "Error",
+          message: "Invalid conversion type. Use 'opportunity' or 'learner'.",
+        });
+      }
+  
+      // Delete the original lead after conversion
       await lead.destroy();
-
+  
       res.status(200).send({
         status: "Success",
-        message: "Lead converted to opportunity successfully",
-        data: newOpportunity,
+        message: `Lead converted to ${convertTo} successfully`,
+        data: convertedEntity,
       });
+  
     } catch (error) {
-      console.error("Error converting lead to opportunity:", error);
+      console.error(`Error converting lead to ${convertTo}:`, error);
       res.status(500).send({
         status: "Error",
-        message: "An error occurred while converting the lead to an opportunity",
+        message: `An error occurred while converting the lead to ${convertTo}`,
         error: error.message,
       });
     }
-  }
+  },
+
+
 };
 
 module.exports = leadDetail;

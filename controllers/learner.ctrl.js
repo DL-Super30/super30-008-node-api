@@ -1,38 +1,24 @@
 const learnerDetail = {
   getlearner: async (req, res) => {
     try {
-      // Get page and limit from the request query, set defaults if not provided
-      const page = parseInt(req.query.page) || 1; // Default to page 1
-      const limit = parseInt(req.query.limit) || 10; // Default to 10 leads per page
-
-      // Calculate the offset
-      const offset = (page - 1) * limit;
-
-      // Fetch leads with pagination
-      const { rows: learner, count: totalLearner } =
-        await req.LearnerModel.findAndCountAll({
-          offset,
-          limit,
-          // order: [["createdAt", "DESC"]], // Sort by created date
-          /* attributes: {
-              exclude: ["email", "phone"], // Exclude fields from the response
-            }, */
-        });
-      // const { cc, ...responseData } = learner.toJSON();
-      // Send the paginated response
+      // Fetch all learners without pagination
+      const learner = await req.LearnerModel.findAll({
+        // order: [["createdAt", "DESC"]], // Sort by created date
+        /* attributes: {
+            exclude: ["email", "phone"], // Exclude fields from the response if needed
+          }, */
+      });
+  
+      // Send the full dataset to the frontend
       res.send({
         data: learner,
         meta: {
-          totalLearner,
-          totalPages: Math.ceil(totalLearner / limit),
-          currentPage: page,
-          perPage: limit,
+          totalLearner: learner.length,  // Total number of learners
         },
       });
     } catch (error) {
       console.error("Error fetching learner:", error);
-      res.status(500);
-      res.send({ error: "Failed to fetch learner" });
+      res.status(500).send({ error: "Failed to fetch learner" });
     }
   },
   createLearner: async (req, res) => {

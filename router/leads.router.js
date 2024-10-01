@@ -387,8 +387,8 @@ router.patch("/:leadId", leadDetail.PartialUpdateLead);
  * @swagger
  * /api/leads/{leadId}/convert:
  *   post:
- *     summary: Convert a lead to an opportunity
- *     description: Convert a lead to an opportunity and delete the original lead
+ *     summary: Convert a lead to an opportunity or learner
+ *     description: Convert a lead to either an opportunity or a learner and delete the original lead
  *     parameters:
  *       - in: path
  *         name: leadId
@@ -396,9 +396,20 @@ router.patch("/:leadId", leadDetail.PartialUpdateLead);
  *         description: Numeric ID of the lead to convert
  *         schema:
  *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               convertTo:
+ *                 type: string
+ *                 enum: [opportunity, learner]
+ *                 description: Specify whether to convert to an opportunity or a learner
  *     responses:
  *       200:
- *         description: Lead converted to opportunity successfully
+ *         description: Lead converted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -412,12 +423,13 @@ router.patch("/:leadId", leadDetail.PartialUpdateLead);
  *                   description: Confirmation message
  *                 data:
  *                   type: object
- *                   description: The newly created opportunity
+ *                   description: The newly created opportunity or learner
+ *       400:
+ *         description: Bad request, invalid conversion type
  *       404:
  *         description: Lead not found
  *       500:
  *         description: Internal server error
  */
-router.post('/:leadId/convert', leadDetail.convertToOpportunity);
-
+router.post('/:leadId/convert', leadDetail.convertLead);
 module.exports = router;
