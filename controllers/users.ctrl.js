@@ -1,6 +1,7 @@
 //const UserModel = require("../index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const logger = require("../logger");
 const userDetail = {
   getUsers: async (req, res) => {
     try {
@@ -34,7 +35,10 @@ const userDetail = {
     }
   },
   loginUser: async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, rememberMe } = req.body;
+    console.log(rememberMe);
+    const SHORT_TOKEN_EXPIRY = "15m"; // 15 minutes for non-remembered logins
+    const LONG_TOKEN_EXPIRY = "30d"; // 30 days for "Remember Me" logins
     console.log(typeof username);
     try {
       // Find user by username and password
@@ -50,6 +54,9 @@ const userDetail = {
           user.password
         );
         if (isSimilar) {
+          const tokenExpiry = rememberMe
+            ? LONG_TOKEN_EXPIRY
+            : SHORT_TOKEN_EXPIRY;
           const token = await jwt.sign(
             {
               userId: user.id,
@@ -58,22 +65,38 @@ const userDetail = {
               role: "admin",
             },
             "No one can still my token",
-            { expiresIn: "24h" }
+            { expiresIn: tokenExpiry }
           );
           res.status(201);
           res.send({
             status: " valid user detail, please procced further ",
             token,
           });
+        } else {
+          logger.warn(
+            `Invalid login attempt for non-existent user: ${username},password:${password}, IP: ${
+              req.ip
+            }, Time: ${new Date().toISOString()}`
+          );
+          res.status(401); //Unauthorized
+          res.send({
+            error: "Wrong password",
+            status: "Wrong password, Please use correct password ",
+          });
         }
 
         // User found, return user data
       } else {
         // User not found, return 409
-        res.status(409);
+        logger.warn(
+          `Invalid login attempt for non-existent user: ${username}, IP: ${
+            req.ip
+          }, Time: ${new Date().toISOString()}`
+        );
+        res.status(401);
         res.send({
-          error: "Wrong Password",
-          status: "Wrong Password, Please use correct password ",
+          error: "Wrong username",
+          status: "Wrong username, Please use correct username ",
         });
       }
     } catch (error) {

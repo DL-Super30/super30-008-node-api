@@ -1,0 +1,33 @@
+######################Story 3 ###########################
+
+E003-F001-US002-T003: Error Handling in Login API
+        •        Implement error handling in the login API to catch authentication failures.
+        •        Return appropriate error messages for invalid credentials.
+        •        E003-F001-US002-T004: Logging and Monitoring Invalid Login Attempts
+        •        Log invalid login attempts for monitoring and security purposes.
+        •        Set up alerts for multiple invalid attempts from the same IP.
+
+Backend Tasks:
+
+        •        E003-F001-US003-T003: Token Generation for ‘Remember Me’ Option  - done 
+        •        Generate a long-lived token if the “Remember Me” option is selected. -- done 
+        •        Ensure the token is securely stored and transmitted.
+        •        E003-F001-US003-T004: Token Validation Middleware  - done 
+        •        Implement middleware to validate the token on subsequent requests. -- done 
+        •        Refresh the token expiration on each valid request to extend the session.
+
+   res.cookie('authToken', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // Set this in production
+    maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 15 * 60 * 1000, // 30 days or 15 minutes
+  });
+
+#################################story 4 - 2 part######################################
+Backend Tasks:
+
+        •        E004-F001-US002-T003: Create API Endpoints for Lead Trend Data
+        •        Develop endpoints to provide lead data for the graph.
+        •        Ensure data is provided in a format suitable for charting.
+        •        E004-F001-US002-T004: Real-Time Data Processing
+        •        Implement real-time data processing to provide up-to-date lead trend information.
+        •        Optimize queries to ensure timely data retrieval.

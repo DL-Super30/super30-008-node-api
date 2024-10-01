@@ -6,6 +6,7 @@ const createUserModel = require("./model/userSchema");
 const createLeadModel = require("./model/leadsSchema");
 const createOpportunityModel = require("./model/opportunitySchema");
 const createLearnerModel = require("./model/learnerSchema");
+const courseModel = require("./model/courseSchema");
 const swaggerSpec = require("./swagger");
 const swaggerUi = require("swagger-ui-express");
 
@@ -19,6 +20,7 @@ let UserModel;
 let LeadModel;
 let OpporModel;
 let LearnerModel;
+let CourseModel;
 const connection = async () => {
   try {
     await sequelize.authenticate();
@@ -26,6 +28,7 @@ const connection = async () => {
     LeadModel = await createLeadModel(sequelize);
     OpporModel = await createOpportunityModel(sequelize);
     LearnerModel = await createLearnerModel(sequelize);
+    CourseModel = await courseModel(sequelize);
     await sequelize.sync();
     console.log("database is synced ");
     //console.log(UserModel);
@@ -36,13 +39,14 @@ const connection = async () => {
 };
 
 app.use(async (req, res, next) => {
-  if (!UserModel || !LeadModel || !OpporModel) {
+  if (!UserModel || !LeadModel || !OpporModel || !CourseModel) {
     await connection();
   }
   req.UserModel = UserModel; // Attach UserModel to request
   req.LeadModel = LeadModel;
   req.OpporModel = OpporModel;
   req.LearnerModel = LearnerModel;
+  req.CourseModel = CourseModel;
   next();
 });
 
@@ -51,11 +55,13 @@ const leadRouter = require("./router/leads.router");
 const leadStatusRouter = require("./router/leadstatus.router");
 const OpportunityRouter = require("./router/opportunity.router");
 const LearnerRouter = require("./router/learner.router");
+const CourseRouter = require("./router/course.router");
 app.use("/api/users", userRouter);
 app.use("/api/leads", leadRouter);
 app.use("/api/leadstatus", leadStatusRouter);
 app.use("/api/opportunity", OpportunityRouter);
 app.use("/api/learner", LearnerRouter);
+app.use("/api/course", CourseRouter);
 // Serve Swagger documentation at /api-docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //app.use("/api-docs-leads", swaggerUi.serve, swaggerUi.setup(swaggerSpec1));

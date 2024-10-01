@@ -5,7 +5,7 @@ const leadDetail = {
       // Get page and limit from the request query, set defaults if not provided
       const page = parseInt(req.query.page) || 1; // Default to page 1
       const limit = parseInt(req.query.limit) || 10; // Default to 10 leads per page
-
+      console.log(req.LeadModel);
       // Calculate the offset
       const offset = (page - 1) * limit;
 

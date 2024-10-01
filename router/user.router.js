@@ -3,6 +3,7 @@ const express = require("express");
 //const autherizationService = require("../middlewear/autherization.mdw");
 const userDetail = require("../controllers/users.ctrl");
 const userValidator = require("../validation/user.validation");
+const loginLimiter = require("../middlewear/loginLimiter");
 
 const router = express.Router();
 
@@ -212,7 +213,7 @@ router.get("/", userDetail.getUsers);
 router.get("/:id", userDetail.getUser);
 router.delete("/:id", userDetail.deleteUser);
 router.put("/:id", userValidator, userDetail.updateUser);
-router.post("/login", userDetail.loginUser);
+router.post("/login", loginLimiter, userDetail.loginUser);
 router.post("/register", userValidator, userDetail.registerUser);
 
 module.exports = router;
