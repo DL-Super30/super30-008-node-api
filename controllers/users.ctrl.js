@@ -1,6 +1,7 @@
 //const UserModel = require("../index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const logger = require("../logger");
 const userDetail = {
   getUsers: async (req, res) => {
     try {
@@ -34,11 +35,76 @@ const userDetail = {
     }
   },
   loginUser: async (req, res) => {
+<<<<<<< HEAD
+    const { username, password, rememberMe } = req.body;
+    console.log(rememberMe);
+    const SHORT_TOKEN_EXPIRY = "15m"; // 15 minutes for non-remembered logins
+    const LONG_TOKEN_EXPIRY = "30d"; // 30 days for "Remember Me" logins
+    console.log(typeof username);
+    try {
+      // Find user by username and password
+      const user = await req.UserModel.findOne({
+        where: {
+          username: username,
+        },
+      });
+
+      if (user) {
+        const isSimilar = await bcrypt.compare(
+          req.body.password,
+          user.password
+        );
+        if (isSimilar) {
+          const tokenExpiry = rememberMe
+            ? LONG_TOKEN_EXPIRY
+            : SHORT_TOKEN_EXPIRY;
+          const token = await jwt.sign(
+            {
+              userId: user.id,
+              email: user.email,
+              username: user.username,
+              role: "admin",
+            },
+            "No one can still my token",
+            { expiresIn: tokenExpiry }
+          );
+          res.status(201);
+          res.send({
+            status: " valid user detail, please procced further ",
+            token,
+          });
+        } else {
+          logger.warn(
+            `Invalid login attempt for non-existent user: ${username},password:${password}, IP: ${
+              req.ip
+            }, Time: ${new Date().toISOString()}`
+          );
+          res.status(401); //Unauthorized
+          res.send({
+            error: "Wrong password",
+            status: "Wrong password, Please use correct password ",
+          });
+        }
+
+        // User found, return user data
+      } else {
+        // User not found, return 409
+        logger.warn(
+          `Invalid login attempt for non-existent user: ${username}, IP: ${
+            req.ip
+          }, Time: ${new Date().toISOString()}`
+        );
+        res.status(401);
+        res.send({
+          error: "Wrong username",
+          status: "Wrong username, Please use correct username ",
+=======
     const { username, password, rememberMe } = req.body; // Capture the rememberMe value
     console.log(typeof username);
     try {
         const user = await req.UserModel.findOne({
             where: { username: username },
+>>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
         });
 
         if (user) {

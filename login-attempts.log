@@ -1,0 +1,10 @@
+{"level":"warn","message":"Invalid login attempt for user: mukul12, IP: ::1, Time: 2024-09-18T08:30:27.507Z"}
+{"level":"warn","message":"Invalid login attempt for non-existent user: mukul123, IP: ::1, Time: 2024-09-18T08:33:13.533Z"}
+{"level":"warn","message":"Invalid login attempt for non-existent user: mukul123, IP: ::1, Time: 2024-09-18T08:36:46.587Z"}
+{"level":"warn","message":"Invalid login attempt for non-existent user: mukul123, IP: ::1, Time: 2024-09-18T08:37:34.394Z"}
+{"level":"warn","message":"Invalid login attempt for non-existent user: mukul123,password:mukul12, IP: ::1, Time: 2024-09-18T08:38:48.624Z"}
+{"level":"warn","message":"Invalid login attempt for non-existent user: mukul123,password:mukul12, IP: ::1, Time: 2024-09-18T08:53:18.809Z"}
+{"level":"warn","message":"Invalid login attempt for non-existent user: mukul12, IP: ::1, Time: 2024-09-18T08:53:23.108Z"}
+{"level":"warn","message":"Invalid login attempt for non-existent user: mukul12, IP: ::1, Time: 2024-09-18T08:53:26.626Z"}
+{"level":"warn","message":"Invalid login attempt for non-existent user: mukul1, IP: ::1, Time: 2024-09-18T08:53:29.400Z"}
+{"level":"warn","message":"Invalid login attempt for non-existent user: mukul13, IP: ::1, Time: 2024-09-18T08:53:33.875Z"}

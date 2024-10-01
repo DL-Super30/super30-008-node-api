@@ -2,12 +2,34 @@ const { Op, Sequelize } = require("sequelize");
 const leadDetail = {
   getLeads: async (req, res) => {
     try {
+<<<<<<< HEAD
+      // Get page and limit from the request query, set defaults if not provided
+      const page = parseInt(req.query.page) || 1; // Default to page 1
+      const limit = parseInt(req.query.limit) || 10; // Default to 10 leads per page
+      console.log(req.LeadModel);
+      // Calculate the offset
+      const offset = (page - 1) * limit;
+
+      // Fetch leads with pagination
+      const { rows: leads, count: totalLeads } =
+        await req.LeadModel.findAndCountAll({
+          offset,
+          limit,
+          order: [["createdAt", "DESC"]], // Sort by created date
+          /* attributes: {
+            exclude: ["email", "phone"], // Exclude fields from the response
+          }, */
+        });
+
+      // Send the paginated response
+=======
       // Get all leads without pagination
       const leads = await req.LeadModel.findAll({
         order: [["createdAt", "DESC"]], // Sort by created date
       });
 
       // Send all leads in the response
+>>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
       res.send({
         data: leads,
         meta: {
