@@ -35,6 +35,7 @@ const userDetail = {
     }
   },
   loginUser: async (req, res) => {
+<<<<<<< HEAD
     const { username, password, rememberMe } = req.body;
     console.log(rememberMe);
     const SHORT_TOKEN_EXPIRY = "15m"; // 15 minutes for non-remembered logins
@@ -97,16 +98,54 @@ const userDetail = {
         res.send({
           error: "Wrong username",
           status: "Wrong username, Please use correct username ",
+=======
+    const { username, password, rememberMe } = req.body; // Capture the rememberMe value
+    console.log(typeof username);
+    try {
+        const user = await req.UserModel.findOne({
+            where: { username: username },
+>>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
         });
-      }
+
+        if (user) {
+            const isSimilar = await bcrypt.compare(password, user.password);
+            if (isSimilar) {
+                // Set token expiry based on rememberMe
+                const tokenExpiry = rememberMe ? '30d' : '24h';
+
+                const token = await jwt.sign(
+                    {
+                        userId: user.id,
+                        email: user.email,
+                        username: user.username,
+                        role: "admin",
+                    },
+                    "No one can still my token", // Secret key
+                    { expiresIn: tokenExpiry }
+                );
+                
+                res.status(201).send({
+                    status: "Valid user detail, please proceed further",
+                    token,
+                });
+            } else {
+                res.status(409).send({
+                    error: "Wrong Password",
+                    status: "Wrong password, please use correct password",
+                });
+            }
+        } else {
+            res.status(404).send({
+                error: "User not found",
+                status: "No user with this username exists",
+            });
+        }
     } catch (error) {
-      console.error("Error finding user:", error);
-      res.status(500);
-      res.send({
-        error: error,
-      });
+        console.error("Error finding user:", error);
+        res.status(500).send({ error });
     }
-  },
+},
+
   registerUser: async (req, res) => {
     const { username, email, password } = req.body;
     try {

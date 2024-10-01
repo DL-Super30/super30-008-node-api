@@ -2,6 +2,7 @@ const { Op, Sequelize } = require("sequelize");
 const leadDetail = {
   getLeads: async (req, res) => {
     try {
+<<<<<<< HEAD
       // Get page and limit from the request query, set defaults if not provided
       const page = parseInt(req.query.page) || 1; // Default to page 1
       const limit = parseInt(req.query.limit) || 10; // Default to 10 leads per page
@@ -21,19 +22,23 @@ const leadDetail = {
         });
 
       // Send the paginated response
+=======
+      // Get all leads without pagination
+      const leads = await req.LeadModel.findAll({
+        order: [["createdAt", "DESC"]], // Sort by created date
+      });
+
+      // Send all leads in the response
+>>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
       res.send({
         data: leads,
         meta: {
-          totalLeads,
-          totalPages: Math.ceil(totalLeads / limit),
-          currentPage: page,
-          perPage: limit,
+          totalLeads: leads.length,
         },
       });
     } catch (error) {
       console.error("Error fetching leads:", error);
-      res.status(500);
-      res.send({ error: "Failed to fetch leads" });
+      res.status(500).send({ error: "Failed to fetch leads" });
     }
   },
   createLead: async (req, res) => {
@@ -49,7 +54,7 @@ const leadDetail = {
       selectedClassMode,
     } = req.body;
     try {
-      phone = "+91" + phone;
+      phone = "+91 " + phone;
       const newLead = await req.LeadModel.create({
         leadname: leadname,
         phone: phone,
@@ -146,7 +151,7 @@ const leadDetail = {
     } = req.body;
     try {
       const lead = await req.LeadModel.findByPk(leadId);
-      phone = "+91" + phone;
+      phone =  phone;
       const updatedLead = await lead.update({
         leadname: leadname,
         phone: phone,
@@ -343,6 +348,57 @@ const leadDetail = {
       console.error("Error fetching lead counts by hour:", error);
     }
   },
+  convertToOpportunity: async (req, res) => {
+    const leadId = req.params.leadId;
+    try {
+      // Find the lead
+      const lead = await req.LeadModel.findByPk(leadId);
+      if (!lead) {
+        return res.status(404).send({
+          status: "Error",
+          message: "Lead not found",
+        });
+      }
+
+      // Create a new opportunity from the lead data
+      const newOpportunity = await req.OpporModel.create({
+        name: lead.leadname,
+        cc: lead.cc || '',
+        phone: lead.phone,
+        email: lead.email,
+        feeQuoted: lead.feeQuoted,
+        batchTiming: lead.batchTiming,
+        leadStatus: lead.leadStatus,
+        stack: lead.stack || '',
+        ClassMode: lead.selectedClassMode,
+        opportunityStatus: 'New',
+        opportunitySatge: 'Initial Contact',
+        DemoAttendedStage: '',
+        visitedStage: '',
+        lostOpportunityReason: '',
+        nextFollowUp: new Date(),
+        leadSource: lead.leadSource,
+        course: lead.course,
+        description: '',
+      });
+
+      // Delete the original lead
+      await lead.destroy();
+
+      res.status(200).send({
+        status: "Success",
+        message: "Lead converted to opportunity successfully",
+        data: newOpportunity,
+      });
+    } catch (error) {
+      console.error("Error converting lead to opportunity:", error);
+      res.status(500).send({
+        status: "Error",
+        message: "An error occurred while converting the lead to an opportunity",
+        error: error.message,
+      });
+    }
+  }
 };
 
 module.exports = leadDetail;

@@ -1,11 +1,10 @@
 const Joi = require("joi");
-
 const userValidator = async (req, res, next) => {
   try {
     const schema = Joi.object({
       username: Joi.string().alphanum().min(4).max(30).required(),
       password: Joi.string()
-        .pattern(new RegExp("^[a-zA-Z0-9]{4,30}$"))
+        .pattern(new RegExp("^[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]{4,30}$")) // Allow special characters
         .required(),
       email: Joi.string().email().required(),
     });
@@ -16,10 +15,9 @@ const userValidator = async (req, res, next) => {
     res.status(400);
     res.send({
       error: "Bad request",
-      errorDescription: "failed in validating the request payload ",
+      errorDescription: "Failed in validating the request payload",
       status: error.message.replaceAll('"', ""),
     });
   }
 };
-
 module.exports = userValidator;

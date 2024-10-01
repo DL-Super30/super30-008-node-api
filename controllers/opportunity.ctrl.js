@@ -1,42 +1,30 @@
 const opportunityDetail = {
   getOpportunity: async (req, res) => {
     try {
-      // Get page and limit from the request query, set defaults if not provided
-      const page = parseInt(req.query.page) || 1; // Default to page 1
-      const limit = parseInt(req.query.limit) || 10; // Default to 10 leads per page
+      // Fetch all opportunities without pagination
+      const opportunities = await req.OpporModel.findAll({
+        // Uncomment the line below to sort by created date if needed
+        // order: [["createdAt", "DESC"]],
+        // Uncomment the attributes section if you want to exclude specific fields
+        /* attributes: {
+          exclude: ["email", "phone"], // Exclude fields from the response
+        }, */
+      });
 
-      // Calculate the offset
-      const offset = (page - 1) * limit;
-
-      // Fetch leads with pagination
-      const { rows: opportunity, count: totalOpport } =
-        await req.OpporModel.findAndCountAll({
-          offset,
-          limit,
-          // order: [["createdAt", "DESC"]], // Sort by created date
-          /* attributes: {
-            exclude: ["email", "phone"], // Exclude fields from the response
-          }, */
-        });
-      // const { cc, ...responseData } = opportunity.toJSON();
-      // Send the paginated response
       res.send({
-        data: opportunity,
+        data: opportunities,
         meta: {
-          totalOpport,
-          totalPages: Math.ceil(totalOpport / limit),
-          currentPage: page,
-          perPage: limit,
+          totalOpport: opportunities.length, // Total number of opportunities
         },
       });
     } catch (error) {
       console.error("Error fetching leads:", error);
-      res.status(500);
-      res.send({ error: "Failed to fetch leads" });
+      res.status(500).send({ error: "Failed to fetch leads" });
     }
   },
+
   createOpport: async (req, res) => {
-    let {
+    const {
       name,
       cc,
       phone,
@@ -56,101 +44,91 @@ const opportunityDetail = {
       course,
       description,
     } = req.body;
+
     try {
-      //phone = cc + phone;
+      // Date formatting function
+      const formatDate = (date) => {
+        if (!date) return null; // If no date provided
+        const parsedDate = new Date(date); // Convert date string to Date object
+        if (isNaN(parsedDate.getTime())) {
+          throw new Error("Invalid date format");
+        }
+        return parsedDate.toISOString(); // Format date to ISO 8601 for PostgreSQL
+      };
+
+      const formattedNextFollowUp = formatDate(nextFollowUp);
+
+      // Create the new Opportunity
       const newOpport = await req.OpporModel.create({
-        name: name,
-        cc: cc,
-        phone: phone,
-        email: email,
-        feeQuoted: feeQuoted,
-        batchTiming: batchTiming,
-        leadStatus: leadStatus,
-        stack: stack,
-        ClassMode: ClassMode,
-        opportunityStatus: opportunityStatus,
-        opportunitySatge: opportunitySatge,
-        DemoAttendedStage: DemoAttendedStage,
-        visitedStage: visitedStage,
-        lostOpportunityReason: lostOpportunityReason,
-        nextFollowUp: nextFollowUp,
-        leadSource: leadSource,
-        course: course,
-        description: description,
+        name,
+        cc,
+        phone,
+        email,
+        feeQuoted,
+        batchTiming,
+        leadStatus,
+        stack,
+        ClassMode,
+        opportunityStatus,
+        opportunitySatge,
+        DemoAttendedStage,
+        visitedStage,
+        lostOpportunityReason,
+        nextFollowUp: formattedNextFollowUp,
+        leadSource,
+        course,
+        description,
       });
-      if (newOpport) {
-        res.status(200);
-        res.send({
-          status: "Opportunity successfully created",
-          data: newOpport,
-        });
-      }
+
+      res.status(201).send({
+        status: "Opportunity successfully created",
+        data: newOpport,
+      });
     } catch (error) {
-      //console.log("what is value inside error.name " + error.name);
-      // Handle specific database errors
+      console.error("Error creating opportunity:", error);
       if (error.name === "SequelizeValidationError") {
-        res.status(400);
-        res.send({
+        res.status(400).send({
           status: "Error",
           error: "Invalid email format",
-          error,
+        });
+      } else if (error.message === "Invalid date format") {
+        res.status(400).send({
+          status: "Error",
+          error: "Invalid date format for next follow-up",
         });
       } else {
-        // General error handling
         res.status(500).send({
           status: "Error",
           error: "An error occurred during registration",
-          error,
         });
-        console.log(error);
       }
     }
   },
-  /* getAll: async (req, res) => {
-    const leadStatus = req.params.leadSatus;
-    try {
-      let leads = await req.LeadModel.findAll({
-        where: {
-          leadStatus: leadStatus, // This will benefit from the leadStatus index
-        },
-      });
-      res.status(200);
-      res.send({
-        data: leads,
-      });
-    } catch (error) {
-      console.error("Error fetching leads:", error);
-      res.status(500);
-      res.send({ error: "Failed to fetch leads" });
-    }
-  }, */
+
   delete: async (req, res) => {
     const id = req.params.id;
     try {
-      const Opportunity = await req.OpporModel.findByPk(id);
-      if (!Opportunity) {
-        res.status(404);
-        res.send({
-          status: "Opportunity not found ",
-          error: error,
-        });
-      } else {
-        const deletedOpport = Opport;
-        await Opportunity.destroy();
-        res.status(200);
-        res.send({
-          message: "user deleted !",
-          data: deletedOpport,
+      const opportunity = await req.OpporModel.findByPk(id);
+      if (!opportunity) {
+        return res.status(404).send({
+          status: "Opportunity not found",
         });
       }
+
+      await opportunity.destroy();
+      res.status(200).send({
+        message: "Opportunity deleted!",
+        data: opportunity,
+      });
     } catch (error) {
-      res.status(500);
-      res.send({ error });
+      console.error("Error deleting opportunity:", error);
+      res.status(500).send({ error });
     }
   },
+
   updateOpportunity: async (req, res) => {
     const id = req.params.id;
-    let {
+    const {
       name,
       cc,
       phone,
@@ -170,71 +148,72 @@ const opportunityDetail = {
       course,
       description,
     } = req.body;
+
     try {
       const opportunity = await req.OpporModel.findByPk(id);
-      //phone = cc + phone;
+      if (!opportunity) {
+        return res.status(404).send({
+          status: "Opportunity not found",
+        });
+      }
+
+      // Update opportunity
       const updatedOpport = await opportunity.update({
-        name: name,
-        cc: cc,
-        phone: phone,
-        email: email,
-        feeQuoted: feeQuoted,
-        batchTiming: batchTiming,
-        leadStatus: leadStatus,
-        stack: stack,
-        ClassMode: ClassMode,
-        opportunityStatus: opportunityStatus,
-        opportunitySatge: opportunitySatge,
-        DemoAttendedStage: DemoAttendedStage,
-        visitedStage: visitedStage,
-        lostOpportunityReason: lostOpportunityReason,
-        nextFollowUp: nextFollowUp,
-        leadSource: leadSource,
-        course: course,
-        description: description,
+        name,
+        cc,
+        phone,
+        email,
+        feeQuoted,
+        batchTiming,
+        leadStatus,
+        stack,
+        ClassMode,
+        opportunityStatus,
+        opportunitySatge,
+        DemoAttendedStage,
+        visitedStage,
+        lostOpportunityReason,
+        nextFollowUp,
+        leadSource,
+        course,
+        description,
       });
-      res.status(200);
-      res.send({
+
+      res.status(200).send({
         status: "Success",
-        message: "Opportunity Updated Successfully ",
+        message: "Opportunity updated successfully",
         data: updatedOpport,
       });
     } catch (error) {
-      console.log(error);
-      res.status(500);
-      res.send({
+      console.error("Error updating opportunity:", error);
+      res.status(500).send({
         status: "Error",
-        message: "error occured while updating the user in databse ",
+        message: "An error occurred while updating the opportunity",
       });
     }
   },
+
   PartialUpdateOpportunity: async (req, res) => {
-    console.log("what is the type of " + typeof req.OpporModel);
     const id = req.params.id;
     try {
       const opportunity = await req.OpporModel.findByPk(id);
-      if (opportunity) {
-        for (let key in req.body) {
-          //console.log(req.body[key]);
-          console.log(req.body[key]);
-          opportunity[key] = req.body[key];
-        }
-        res.status(200);
-        res.send({ result: " Partial update of opportunity is done" });
-      } else {
-        res.status(404);
-        res.send({
+      if (!opportunity) {
+        return res.status(404).send({
           error: "Not Found",
-          errorDescription: "Lead is not available in API with the given Id",
+          errorDescription: "Opportunity not found with the given ID",
         });
       }
+
+      // Update only the fields provided in req.body
+      Object.assign(opportunity, req.body);
       await opportunity.save();
+
+      res.status(200).send({ result: "Partial update of opportunity is done" });
     } catch (error) {
-      console.log(error);
-      res.status(500);
-      res.send({
+      console.error("Error during partial update:", error);
+      res.status(500).send({
         status: "Error",
-        message: "error occured while updating the user in databse ",
+        message: "An error occurred during the partial update",
         error,
       });
     }
