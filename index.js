@@ -27,12 +27,12 @@ let UserModel;
 let LeadModel;
 let OpporModel;
 let LearnerModel;
-<<<<<<< HEAD
+// <<<<<<< HEAD
 let CourseModel;
-=======
+// =======
 
 // Database connection function
->>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
+// >>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
 const connection = async () => {
   try {
     await sequelize.authenticate();
@@ -51,20 +51,18 @@ const connection = async () => {
 
 // Middleware to ensure models are available
 app.use(async (req, res, next) => {
-// <<<<<<< HEAD
   if (!UserModel || !LeadModel || !OpporModel || !CourseModel) {
-// =======
-  if (!UserModel || !LeadModel || !OpporModel || !LearnerModel) {
-// >>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
-    await connection();
-  }
-  req.UserModel = UserModel;
-  req.LeadModel = LeadModel;
-  req.OpporModel = OpporModel;
-  req.LearnerModel = LearnerModel;
-  req.CourseModel = CourseModel;
-  next();
-});
+    if (!UserModel || !LeadModel || !OpporModel || !LearnerModel) {
+
+      await connection();
+    }
+    req.UserModel = UserModel;
+    req.LeadModel = LeadModel;
+    req.OpporModel = OpporModel;
+    req.LearnerModel = LearnerModel;
+    req.CourseModel = CourseModel;
+    next();
+  }});
 
 // Routers
 const userRouter = require("./router/user.router");
