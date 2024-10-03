@@ -51,11 +51,11 @@ const connection = async () => {
 
 // Middleware to ensure models are available
 app.use(async (req, res, next) => {
-<<<<<<< HEAD
+// <<<<<<< HEAD
   if (!UserModel || !LeadModel || !OpporModel || !CourseModel) {
-=======
+// =======
   if (!UserModel || !LeadModel || !OpporModel || !LearnerModel) {
->>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
+// >>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
     await connection();
   }
   req.UserModel = UserModel;
@@ -72,21 +72,21 @@ const leadRouter = require("./router/leads.router");
 const leadStatusRouter = require("./router/leadstatus.router");
 const OpportunityRouter = require("./router/opportunity.router");
 const LearnerRouter = require("./router/learner.router");
-<<<<<<< HEAD
+// <<<<<<< HEAD
 const CourseRouter = require("./router/course.router");
-=======
+// =======
 
->>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
+// >>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
 app.use("/api/users", userRouter);
 app.use("/api/leads", leadRouter);
 app.use("/api/leadstatus", leadStatusRouter);
 app.use("/api/opportunity", OpportunityRouter);
 app.use("/api/learner", LearnerRouter);
-<<<<<<< HEAD
+// <<<<<<< HEAD
 app.use("/api/course", CourseRouter);
-=======
+// =======
 
->>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
+// >>>>>>> 592649378e9d04f231f975bcf90ad5b5550db587
 // Serve Swagger documentation at /api-docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
