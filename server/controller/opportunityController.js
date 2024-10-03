@@ -10,7 +10,7 @@ import { OpportunityModel } from "../postgres/postgres.js"
 
 /**
  * @swagger
- * /api/opportunities:
+ * /api/Opportunity:
  *   get:
  *     summary: Get a list of all opportunities
  *     tags: [Opportunities]
@@ -49,13 +49,13 @@ import { OpportunityModel } from "../postgres/postgres.js"
  *                 meta:
  *                   type: object
  *                   properties:
- *                     totalOpportunity:
+ *                     totalopportunity:
  *                       type: integer
- *                     totalPages:
+ *                     totalpages:
  *                       type: integer
- *                     currentPage:
+ *                     currentpage:
  *                       type: integer
- *                     perPage:
+ *                     perpage:
  *                       type: integer
  */
 
@@ -68,7 +68,7 @@ import { OpportunityModel } from "../postgres/postgres.js"
   
        
         const { rows: opportunity, count: totalOpportunity } =
-          await req.OpportunityModel.findAndCountAll({
+          await OpportunityModel.findAndCountAll({
             offset,
             limit,
             
@@ -92,7 +92,7 @@ import { OpportunityModel } from "../postgres/postgres.js"
      
     /**
  * @swagger
- * /api/opportunities:
+ * /api/addOpportunity:
  *   post:
  *     summary: Create a new opportunity
  *     tags: [Opportunities]
@@ -109,75 +109,88 @@ import { OpportunityModel } from "../postgres/postgres.js"
  *                 type: string
  *               phone:
  *                 type: string
- *               feeQuoted:
+ *               feequoted:
  *                 type: number
- *               leadStatus:
+ *               leadstatus:
  *                 type: string
+ *               batchtiming:
+ *                 type: string
+ *               stack:
+ *                 type: string              
+ *               Classmode:
+ *                 type: string
+ *               opportunitystatus:
+ *                 type: string
+ *               opportunitysatge:
+ *                 type: string
+
+ *               Demoattendedstage:
+ *                 type: string
+
+ *               visitedstage:
+ *                 type: string
+
+ *               lostopportunityreason:
+ *                 type: string
+
+ *               nextfollowup:
+ *                 type: string
+
+ *               leadsource:
+ *                 type: string
+
+ *               course:
+ *                 type: string
+ 
+ *               description:
+ *                 type: string
+
  *     responses:
  *       200:
  *         description: Opportunity created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                     name:
- *                       type: string
- *                     email:
- *                       type: string
- *                     phone:
- *                       type: string
+
  */
 
     const createOpportunity= async (req, res) => {
-      let {
+      const {
         name,
-        cc,
         phone,
         email,
-        feeQuoted,
-        batchTiming,
-        leadStatus,
+        feequoted,
+        batchtiming,
+        leadstatus,
         stack,
-        ClassMode,
-        opportunityStatus,
-        opportunitySatge,
-        DemoAttendedStage,
-        visitedStage,
-        lostOpportunityReason,
-        nextFollowUp,
-        leadSource,
+        classmode,
+        opportunitystatus,
+        opportunitystage,
+        demoattendedstage,
+        visitedstage,
+        lostopportunityreason,
+        nextfollowup,
+        leadsource,
         course,
         description,
       } = req.body;
       try {
         
         const newOpportunity = await OpportunityModel.create({
-          name: name,
-          cc: cc,
-          phone: phone,
-          email: email,
-          feeQuoted: feeQuoted,
-          batchTiming: batchTiming,
-          leadStatus: leadStatus,
-          stack: stack,
-          ClassMode: ClassMode,
-          opportunityStatus: opportunityStatus,
-          opportunitySatge: opportunitySatge,
-          DemoAttendedStage: DemoAttendedStage,
-          visitedStage: visitedStage,
-          lostOpportunityReason: lostOpportunityReason,
-          nextFollowUp: nextFollowUp,
-          leadSource: leadSource,
-          course: course,
-          description: description,
+          name,
+          phone,
+          email,
+          feequoted,
+          batchtiming,
+          leadstatus,
+          stack,
+          classmode,
+          opportunitystatus,
+          opportunitystage,
+          demoattendedstage,
+          visitedstage,
+          lostopportunityreason,
+          nextfollowup,
+          leadsource,
+          course,
+          description,
         });
        
           res.status(200).send({
@@ -204,20 +217,21 @@ import { OpportunityModel } from "../postgres/postgres.js"
         }
       }
     };
-
 /**
  * @swagger
- * /api/opportunities/{id}:
+ * /api/opportunity/{id}:
  *   put:
  *     summary: Update an existing opportunity
- *     tags: [Opportunities]
+ *     description: Updates the details of an opportunity based on the given ID.
+ *     tags:
+ *       - Opportunities
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
+ *         description: The ID of the opportunity to update
  *         schema:
  *           type: integer
- *         description: The ID of the opportunity to update
  *     requestBody:
  *       required: true
  *       content:
@@ -227,73 +241,110 @@ import { OpportunityModel } from "../postgres/postgres.js"
  *             properties:
  *               name:
  *                 type: string
- *                 description: Name of the opportunity
- *               email:
+ *                 example: "John Doe"
+ *               cc:
  *                 type: string
- *                 description: Email address
+ *                 example: "1234567890"
  *               phone:
  *                 type: string
- *                 description: Contact number
- *               feeQuoted:
+ *                 example: "9876543210"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "johndoe@example.com"
+ *               feequoted:
  *                 type: number
- *                 description: Fee quoted for the opportunity
- *               batchTiming:
+ *                 example: 5000
+ *               batchtiming:
  *                 type: string
- *                 description: Timing of the batch
- *               leadStatus:
+ *                 example: "Evening"
+ *               leadstatus:
  *                 type: string
- *                 description: Status of the lead
+ *                 example: "Open"
  *               stack:
  *                 type: string
- *                 description: Technology stack
- *               classMode:
+ *                 example: "Web Development"
+ *               Classmode:
  *                 type: string
- *                 description: Mode of class (Online/Offline)
+ *                 example: "Online"
+ *               opportunitystatus:
+ *                 type: string
+ *                 example: "Active"
+ *               opportunitystage:
+ *                 type: string
+ *                 example: "Negotiation"
+ *               Demoattendedstage:
+ *                 type: string
+ *                 example: "Yes"
+ *               visitedstage:
+ *                 type: string
+ *                 example: "No"
+ *               lostopportunityreason:
+ *                 type: string
+ *                 example: "Not Interested"
+ *               nextfollowup:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-10-10"
+ *               leadsource:
+ *                 type: string
+ *                 example: "Website"
+ *               course:
+ *                 type: string
+ *                 example: "Node.js Development"
+ *               description:
+ *                 type: string
+ *                 example: "This opportunity is for a Node.js course."
+ *             required:
+ *               - name
+ *               - phone
+ *               - email
+ *               - feequoted
+ *               - batchtiming
+ *               - leadstatus
+ *               - stack
+ *               - Classmode
+ *               - opportunitystatus
+ *               - opportunitystage
+ *               - Demoattendedstage
+ *               - visitedstage
+ *               - lostopportunityreason
+ *               - nextfollowup
+ *               - leadsource
+ *               - course
+ *               - description
  *     responses:
- *       200:
+ *       '200':
  *         description: Opportunity updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                 message:
- *                   type: string
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                     name:
- *                       type: string
- *                     email:
- *                       type: string
- *                     phone:
- *                       type: string
+ *        
+ *       '404':
+ *         description: Opportunity not found
+ *        
+ *       '500':
+ *         description: Error occurred while updating the opportunity
+ *        
  */
 
 
     const updateOpportunity = async (req, res) => {
-        const {id }= req.params.id;
+        const {id }= req.params;
         let {
           name,
           cc,
           phone,
           email,
-          feeQuoted,
-          batchTiming,
-          leadStatus,
+          feequoted,
+          batchtiming,
+          leadstatus,
           stack,
-          ClassMode,
-          opportunityStatus,
-          opportunitySatge,
-          DemoAttendedStage,
-          visitedStage,
-          lostOpportunityReason,
-          nextFollowUp,
-          leadSource,
+          Classmode,
+          opportunitystatus,
+          opportunitystage,
+          Demoattendedstage,
+          visitedstage,
+          lostopportunityreason,
+          nextfollowup,
+          leadsource,
           course,
           description,
         } = req.body;
@@ -305,18 +356,18 @@ import { OpportunityModel } from "../postgres/postgres.js"
             cc: cc,
             phone: phone,
             email: email,
-            feeQuoted: feeQuoted,
-            batchTiming: batchTiming,
-            leadStatus: leadStatus,
+            feequoted: feequoted,
+            batchtiming: batchtiming,
+            leadstatus: leadstatus,
             stack: stack,
-            ClassMode: ClassMode,
-            opportunityStatus: opportunityStatus,
-            opportunitySatge: opportunitySatge,
-            DemoAttendedStage: DemoAttendedStage,
-            visitedStage: visitedStage,
-            lostOpportunityReason: lostOpportunityReason,
-            nextFollowUp: nextFollowUp,
-            leadSource: leadSource,
+            Classmode: Classmode,
+            opportunitystatus: opportunitystatus,
+            opportunitystage: opportunitystage,
+            Demoattendedstage: Demoattendedstage,
+            visitedstage: visitedstage,
+            lostopportunityreason: lostopportunityreason,
+            nextfollowup: nextfollowup,
+            leadsource: leadsource,
             course: course,
             description: description,
           });
@@ -336,9 +387,9 @@ import { OpportunityModel } from "../postgres/postgres.js"
         }
       };
 
-      /**
+ /**
  * @swagger
- * /api/opportunities/{id}:
+ * /api/opportunity/{id}:
  *   delete:
  *     summary: Delete an opportunity
  *     tags: [Opportunities]
@@ -352,42 +403,19 @@ import { OpportunityModel } from "../postgres/postgres.js"
  *     responses:
  *       200:
  *         description: Opportunity deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Opportunity deleted successfully"
+ *        
+ *                
  *       404:
  *         description: Opportunity not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "Opportunity not found"
- *                 error:
- *                   type: string
- *                   example: "The specified opportunity does not exist"
+ *        
  *       500:
  *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "An error occurred while deleting the opportunity"
+ *        
  */
 
   
-    const deleteopportunity = async (req, res) => {
-      const {id} = req.params.id;
+    const deleteOpportunity = async (req, res) => {
+      const {id} = req.params;
       try {
         const Opportunity = await OpportunityModel.findByPk(id);
         if (!Opportunity) {
@@ -401,12 +429,13 @@ import { OpportunityModel } from "../postgres/postgres.js"
           res.status(200);
           res.send({
             message: "user deleted !",
-            data: deletedOpport,
+            data:Opportunity,
           });
         }
       } catch (error) {
+        console.error("Error details:", error.message || error.stack); 
         res.status(500);
-        res.send({ error });
+        res.send({ error: error.message || "An error occurred while deleting the opportunity" });
       }
     };
  
@@ -417,5 +446,5 @@ import { OpportunityModel } from "../postgres/postgres.js"
     getOpportunity,
     createOpportunity,
     updateOpportunity,
-    deleteopportunity,
+    deleteOpportunity,
  }

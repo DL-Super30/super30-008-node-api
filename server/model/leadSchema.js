@@ -1,9 +1,10 @@
 import { DataTypes } from "sequelize";
 
+
 export const createLeadModel = (sequelize) => {
   return sequelize.define('lead', {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       primaryKey: true,
       autoIncrement: true,
     },
@@ -22,11 +23,11 @@ export const createLeadModel = (sequelize) => {
         isEmail: true,
       },
     },
-    lead_status: {
-      type: DataTypes.ENUM('New', 'Contacted', 'Qualified', 'Lost', 'Not Contacted'),
+    leadstatus: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    lead_source: {
+    leadsource: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -38,23 +39,24 @@ export const createLeadModel = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    fee_quoted: {
+    feequoted: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    batch_timing: {
+    batchtiming: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    class_mode: {
+    classmode: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    next_follow_up: {
+    nextfollowup: {
       type: DataTypes.DATEONLY,
       allowNull: false,
     },
   }, {
-    underscored: true, // Automatically convert camelCase to snake_case
+    underscored: false,
   });
 };
+

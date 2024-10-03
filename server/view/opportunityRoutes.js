@@ -1,5 +1,5 @@
 import express from 'express';
-import { getOpportunity,createOpportunity,updateOpportunity,deleteopportunity} from '../controller/opportunityController.js';
+import { getOpportunity,createOpportunity,updateOpportunity,deleteOpportunity} from '../controller/opportunityController.js';
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ router.post('/api/addOpportunity',  createOpportunity);
 router.put('/api/Opportunity/:id', updateOpportunity);
 
 
-router.delete('/api/Opportunity/:id', deleteopportunity);
+router.delete('/api/Opportunity/:id', deleteOpportunity);
 
 
 

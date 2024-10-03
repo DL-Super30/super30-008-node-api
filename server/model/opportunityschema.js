@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 
+
 export const createOpportunityModel = (sequelize) => {
   return sequelize.define('opportunity', {
     id: {
@@ -11,10 +12,6 @@ export const createOpportunityModel = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    cc: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     phone: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -22,68 +19,65 @@ export const createOpportunityModel = (sequelize) => {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        isEmail: true,
-      },
     },
-    feeQuoted: {
+    feequoted: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
-    batchTiming: {
+    batchtiming: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    leadStatus: {
-      type: DataTypes.ENUM('notContacted', 'Attempted', 'Warm Lead', 'Cold Lead'),
+    leadstatus: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     stack: {
-      type: DataTypes.ENUM('Select Stack','Life Skills','Study Abroad','HR'),
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    classMode: {
-      type: DataTypes.ENUM('Select Class Mode','International Online','India Online','BLR Class Room','HYD Class Room'),
+    classmode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    opportunitystatus: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    description: {
-      type: DataTypes.TEXT,
+    opportunitystage: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
-    opportunityStatus: {
-      type: DataTypes.ENUM('Select Opportunity Status','Visiting','Visited','demoAttended','lost Opportunity'),
-      allowNull: false,
-    },
-    opportunityStage: {
-      type: DataTypes.ENUM('Select Opportunity Stage','None','Advanced Discussion','Ready To Join','Visiting','Fees Negotiation','Batch Allocation','Interested in Demo','Need Time This Week','Need Time Next Week','Need Time This Month','Need Time Next Month','Special Requirements','Payment Link Sent','Closed won (Registered)','Busy & Asked a call back','Closed Lost'),
+    demoattendedstage: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
-    demoAttendedStage: {
-      type: DataTypes.ENUM('Select Demo Attended Stage','None','Advanced Discussion','Call Not Answered','Visiting','Fees Negotiation','Batch Allocation','Need Time This Week','Need Time Next Week','Need Time This Month','Need Time Next Month','Special Requirements','Closed won (Registered)','Closed Lost (Cold Lead)'),
+    visitedstage: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
-    visitedStage: {
-      type: DataTypes.ENUM('Select Visited Stage','None','Call Not Answered','Ready To Join','Fees Negotiation','Batch Allocation','Interested Demo','Special Requirements ',
-        'Need Time This Week','Need Time Next Week','Need Time This Month','Need Time Next Month','Closed won (Registered)','Closed Lost (Cold Lead)'),
+    lostopportunityreason: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
-    lostOpportunityReason: {
-      type: DataTypes.ENUM('Select Lost Opportunity Reason','None','Invalid Number','Not Interested','Joined Another Institute','Asking Free Course','Pay After Placement'),
-      allowNull: true,
-    },
-    nextFollowUp: {
+    nextfollowup: {
       type: DataTypes.DATEONLY,
       allowNull: true,
     },
-    leadSource: {
-      type: DataTypes.ENUM('None','Walk In','Student Referral','Demo','WebSite','Website Chat','Inbound Call','Google AdWords','Facebook Ads','Google My Business','WhatsApp - Skill Capital'),
+    leadsource: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
     course: {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
   }, {
-    underscored: true, // Automatically convert camelCase to snake_case in DB
+    tableName: 'opportunity', // Explicitly specify the table name
+    freezeTableName: true,    // Prevent Sequelize from pluralizing the table name
   });
 };

@@ -4,7 +4,7 @@ import { getAllLeads, createLead,getAllLeadsByStatus, updateLead, deleteLead } f
 const router = express.Router();
 
 router.get('/api/leads', getAllLeads);
-router.get('/api/getAllLeadsByStatus', getAllLeadsByStatus);
+router.get('/api/getAllLeadsByStatus/:leadstatus', getAllLeadsByStatus);
 
 router.post('/api/addlead',  createLead);
 

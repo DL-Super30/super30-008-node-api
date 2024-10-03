@@ -1,4 +1,4 @@
-import { DataTypes, INTEGER } from "sequelize";
+import { DataTypes } from "sequelize";
 
 export const createUserModel=async(sequelize)=>{
     const User=sequelize.define('user',{
@@ -13,7 +13,8 @@ export const createUserModel=async(sequelize)=>{
         username:
         {
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:false,
+            unique: true
              },
        
         password:{
@@ -21,6 +22,6 @@ export const createUserModel=async(sequelize)=>{
             allowNull:false
         }
     });
-    await User.sync();
+  
     return User;
 }
