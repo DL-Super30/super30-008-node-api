@@ -38,11 +38,14 @@ const swaggerOptions = {
     './controller/leadController.js',
     './controller/opportunityController.js', 
     './controller/learnerController.js', 
+    './controller/coursesController.js', 
+
 
     './view/userRoutes.js',
     './view/leadRoutes.js',
     './view/opportunityRoutes.js',
-    './view/learnerRoutes.js'
+    './view/learnerRoutes.js',
+    './view/courseRoutes.js',
     
   ],
     
