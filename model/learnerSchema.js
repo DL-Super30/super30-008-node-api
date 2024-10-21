@@ -92,7 +92,7 @@ const createLearnerModel = async (sequelize) => {
         allowNull: true,
       },
       registeredCourse: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: true,
       },
       techStack: {

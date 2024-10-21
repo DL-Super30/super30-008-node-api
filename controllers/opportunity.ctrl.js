@@ -218,6 +218,74 @@ const opportunityDetail = {
       });
     }
   },
+  convertOpportunityToLearner: async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      // Find the opportunity by ID
+      const opportunity = await req.OpporModel.findByPk(id);
+  
+      if (!opportunity) {
+        return res.status(404).send({ error: "Opportunity not found" });
+      }
+  
+      // Create a new learner using opportunity data
+      const newLearner = await req.LearnerModel.create({
+        firstname: opportunity.name.split(' ')[0] || '',
+        lastname: opportunity.name.split(' ').slice(1).join(' ') || '',
+        phone: opportunity.phone || '',
+        email: opportunity.email || '',
+        registeredDate: new Date(), // Use current date
+        location: '',
+        batchId: '',
+        alternatePhone: '',
+        description: opportunity.description || '',
+        source: opportunity.leadSource || '',
+        learnerOwner: '',
+        learnerStage: 'New',
+        leadCreatedDate: opportunity.createdAt || new Date(), // Fallback to current date if missing
+        CounselingDoneBy: '',
+        registeredCourse: opportunity.course || null, // Ensure it's an integer or null
+        techStack: opportunity.stack || '',
+        courseComments: '',
+        slackAccess: '',
+        lMSAccess: '',
+        preferableTime: opportunity.batchTiming || '',
+        batchTiming: opportunity.batchTiming || '',
+        modeOfClass: opportunity.ClassMode || '',
+        Comment: `Converted from opportunity. Fee Quoted: ${opportunity.feeQuoted || 'N/A'}`,
+        createdAt: new Date(),
+        nextFollowUp: opportunity.nextFollowUp || new Date(),
+        updatedAt: new Date(),
+      });
+      
+      
+      
+  
+      // Optionally, you can check if the learner was successfully created before deleting the opportunity
+      if (!newLearner) {
+        return res.status(500).send({
+          error: "Failed to create the learner from the opportunity"
+        });
+      }
+  
+      // Delete the opportunity after conversion
+      await opportunity.destroy();
+  
+      // Send success response with created learner data
+      res.status(200).send({
+        message: "Opportunity converted to Learner successfully",
+        data: newLearner,
+      });
+      
+    } catch (error) {
+      console.error("Error converting opportunity to learner:", error);
+      res.status(500).send({
+        error: "An error occurred during the conversion process",
+      });
+    }
+  },
+  
 };
 
 module.exports = opportunityDetail;

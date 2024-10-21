@@ -562,7 +562,38 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-
+/**
+ * @swagger
+ * /api/opportunity/{id}/convert:
+ *   post:
+ *     summary: Convert an Opportunity to a Learner
+ *     description: Converts an Opportunity to a Learner, then deletes the Opportunity
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Numeric ID of the opportunity to convert
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Opportunity converted to Learner successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Opportunity converted to Learner successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Learner'
+ *       404:
+ *         description: Opportunity not found
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/:id/convert",opportunityDetail.convertOpportunityToLearner );
 router.get("/", opportunityDetail.getOpportunity);
 router.post("/", opportunityDetail.createOpport);
 router.delete("/:id", opportunityDetail.delete);

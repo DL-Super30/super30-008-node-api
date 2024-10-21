@@ -8,3 +8,4 @@
 {"level":"warn","message":"Invalid login attempt for non-existent user: mukul12, IP: ::1, Time: 2024-09-18T08:53:26.626Z"}
 {"level":"warn","message":"Invalid login attempt for non-existent user: mukul1, IP: ::1, Time: 2024-09-18T08:53:29.400Z"}
 {"level":"warn","message":"Invalid login attempt for non-existent user: mukul13, IP: ::1, Time: 2024-09-18T08:53:33.875Z"}
+{"level":"warn","message":"Invalid login attempt for user: manideep, IP: ::1, Time: 2024-10-04T06:47:56.263Z"}
